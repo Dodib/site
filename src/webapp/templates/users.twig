@@ -1,0 +1,47 @@
+{% extends 'base.twig' %}
+
+
+{% block content %}
+
+{{ flash.error|raw }} <br />
+
+
+<h2>All users:</h2>
+
+<form action="/admin/deleteMultiple" method="POST">
+<table border=1>
+<tr> 
+    <th></th>
+    <th>ID</th>
+    <th>Username</th>
+    <th>Password</th>
+    <th>Email</th>
+    <th>Bio</th>
+    <th>Administrator?</th>
+    <th>Edit</th>   
+</tr>
+
+{% for user in users %}
+  <tr>
+      <td> <input type="checkbox" name="userlist[]" value="{{user.id}}"></td>
+      <td> {{user.id}} </td>
+      <td> {{user.username}} </td>
+      <td> {{user.password}} </td>
+      <td> {{user.email}} </td>
+      <td> {{user.bio}} </td>
+      <td> {% if user.isAdmin %} Y {% else %} N {% endif %}  </td>
+      <td> 
+          <a href="/admin/edit/{{user.id}}">Edit</a>/ 
+          <a href="/admin/delete/{{user.id}}">Delete</a>
+      </td>
+  </tr>
+{% endfor %}
+
+</table>
+
+<input type="submit" name="submit" value="Delete Checked">
+</form>
+<br>
+<a href="/admin/create"> Add a user </a>
+{% endblock %}
+

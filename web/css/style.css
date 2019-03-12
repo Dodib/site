@@ -1,0 +1,72 @@
+
+body {
+    background-color: #EDEDED;
+    line-height: 1.5em;
+    margin: 0;
+}
+
+a:link {
+      color: #D64078;
+        text-decoration: none;
+}
+
+a:visited {
+      color: #D64078;
+}
+
+a:hover {
+      text-decoration: underline;
+}
+
+a:active {
+    background-color: black;
+    color: white;
+}
+
+#logo {
+    background-color: #EDEDED;
+    text-align: center;
+}
+
+#logo img {
+    width: 220px;
+    vertical-align: middle;
+}
+
+#container {
+    background-color: #FFFFFF;
+    padding: 1em;
+}
+
+#navbar {
+    float: left;
+    height: 500px;
+}
+
+#content {
+    min-height: 200px;
+    max-width: 700px;
+    margin: 0 auto 2em;
+}
+
+input:focus {
+    border: 2px solid #900;
+}
+
+label {
+    display: inline-block;
+    width:300px;
+    text-align: right;
+}
+
+.moviebox {
+    width: 150px;
+    height: 280px;
+    margin-left: 10px;
+    float: left;
+}
+
+.review {
+    border: 1px solid gray;
+    margin: 10px;
+}

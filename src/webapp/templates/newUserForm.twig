@@ -1,0 +1,25 @@
+
+{% extends 'base.twig' %}
+
+
+
+{% block content %}
+
+<h2>Register new user</h2>
+
+{{ flash.error|raw }} <br />
+
+<form action="" method="POST">
+
+<label>Username: </label>
+<input type="text" name="username"> <br />
+<label>Password: </label>
+<input type="text" name="password"> <br />
+<label>Email: </label>
+<input type="text" name="email"> <br />
+<label>Biography: </label>
+<input type="text" name="bio"> <br />
+<input type="submit" name="submit" value="Submit">
+</form>
+{% endblock %}
+
