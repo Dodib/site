@@ -53,7 +53,7 @@ class UserController extends Controller
 
     function delete($tuserid)
     {
-        if(Auth::userAccess($tuserid))
+        if(Auth::isAdmin())
         {
             $user = User::findById($tuserid);
             $user->delete();
@@ -97,13 +97,19 @@ class UserController extends Controller
 
     function show($tuserid)   
     {
-        if(Auth::userAccess($tuserid))
+        if(Auth::isAdmin())
         {
           $user = User::findById($tuserid);
-          $this->render('showuser.twig', [
+          $this->render('showuser_admin.twig', [
             'user' => $user
           ]);
-        } else {
+	} 
+	elseif(Auth::userAccess($tuserid)){
+	  $user = User::findById($tuserid);
+	  $this->render('showuser.twig', [
+	     'user' => $user
+	  ]);
+    	}else{
             $username = Auth::user()->getUserName();
             $this->app->flash('info', 'You do not have access this resource. You are logged in as ' . $username);
             $this->app->redirect('/');
@@ -126,19 +132,26 @@ class UserController extends Controller
             $bio = $request->post('bio');
 
             $isAdmin = ($request->post('isAdmin') != null);
-            
 
-            $user->setUsername($username);
-            $user->setPassword($password);
-            $user->setBio($bio);
-            $user->setEmail($email);
-            $user->setIsAdmin($isAdmin);
+	    /*
+	     *If the username ccannot be found in the databse, we create otherwise error
+	     */
+            if( ! User::findByUser($username)){
+            	$user->setUsername($username);
+            	$user->setPassword($password);
+            	$user->setBio($bio);
+            	$user->setEmail($email);
+            	$user->setIsAdmin($isAdmin);
 
-            $user->save();
-            $this->app->flashNow('info', 'Your profile was successfully saved.');
+            	$user->save();
+            	$this->app->flashNow('info', 'Your profile was successfully saved.');
 
-            $this->app->redirect('/admin');
-
+            	$this->app->redirect('/admin');
+	    
+	    }else{
+		$this->app->flashNow('info','This username already exists');
+		$this->app->redirect('/register');
+	    }
 
         } else {
             $username = $user->getUserName();
@@ -154,8 +167,7 @@ class UserController extends Controller
 
         if (! $user) {
             throw new \Exception("Unable to fetch logged in user's object from db.");
-        } elseif (Auth::userAccess($tuserid)) {
-
+        } elseif (Auth::isAdmin()) {
 
             $request = $this->app->request;
 
@@ -172,6 +184,27 @@ class UserController extends Controller
             $user->setBio($bio);
             $user->setEmail($email);
             $user->setIsAdmin($isAdmin);
+
+            $user->save();
+            $this->app->flashNow('info', 'Your profile was successfully saved.');
+
+            $user = User::findById($tuserid);
+
+            $this->render('showuser_admin.twig', ['user' => $user]);
+
+
+        } elseif (Auth::userAccess($tuserid)) {
+
+
+            $request = $this->app->request;
+
+            $password = $request->post('password');
+            $email = $request->post('email');
+            $bio = $request->post('bio');
+
+            $user->setPassword($password);
+            $user->setBio($bio);
+            $user->setEmail($email);
 
             $user->save();
             $this->app->flashNow('info', 'Your profile was successfully saved.');
