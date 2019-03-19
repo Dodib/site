@@ -4,8 +4,6 @@ namespace ttm4135\webapp\models;
 
 class User
 {
-    const FIND_BY_NAME_QUERY = "SELECT * FROM users WHERE username='%s'";
-    const FIND_BY_ID_QUERY = "SELECT * FROM users WHERE id='%s'";
     protected $id = null;
     protected $username;
     protected $password;
@@ -39,42 +37,42 @@ class User
      */
     function save()
     {
-	if ($this->id === null) {
-    	    $INSERT_QUERY_SAFE = self::$app->db->prepare("INSERT INTO users (username, password, email, bio, isadmin) VALUES (:username, :password, :email, :bio, :isadmin)");
+        if ($this->id === null) {
+            $INSERT_QUERY = self::$app->db->prepare("INSERT INTO users (username, password, email, bio, isadmin) VALUES (:username, :password, :email, :bio, :isadmin)");
 
-	    $INSERT_QUERY_SAFE->bindParam(':username', $this->username);
-	    $INSERT_QUERY_SAFE->bindParam(':password', $this->password);
-	    $INSERT_QUERY_SAFE->bindParam(':email', $this->email);
-	    $INSERT_QUERY_SAFE->bindParam(':bio', $this->bio);
-	    $INSERT_QUERY_SAFE->bindParam(':isadmin', $this->isAdmin);
+            $INSERT_QUERY->bindParam(':username', $this->username);
+            $INSERT_QUERY->bindParam(':password', $this->password);
+            $INSERT_QUERY->bindParam(':email', $this->email);
+            $INSERT_QUERY->bindParam(':bio', $this->bio);
+            $INSERT_QUERY->bindParam(':isadmin', $this->isAdmin);
 
-	    $INSERT_QUERY_SAFE->execute();
+            $INSERT_QUERY->execute();
 	    
-	    return;
+            return;
 
         } else {
-	    $UPDATE_QUERY_SAFE = self::$app->db->prepare("UPDATE users SET username=:username, password=:password, email=:email, bio=:bio, isadmin=:isadmin WHERE id=:id");
+            $UPDATE_QUERY = self::$app->db->prepare("UPDATE users SET username=:username, password=:password, email=:email, bio=:bio, isadmin=:isadmin WHERE id=:id");
 
-	    $UPDATE_QUERY_SAFE->bindParam(':username', $this->username);
-	    $UPDATE_QUERY_SAFE->bindParam(':password', $this->password);
-	    $UPDATE_QUERY_SAFE->bindParam(':email', $this->email);
-	    $UPDATE_QUERY_SAFE->bindParam(':bio', $this->bio);
-	    $UPDATE_QUERY_SAFE->bindParam(':isadmin', $this->isAdmin);
-	    $UPDATE_QUERY_SAFE->bindParam(':id', $this->id);
+            $UPDATE_QUERY->bindParam(':username', $this->username);
+            $UPDATE_QUERY->bindParam(':password', $this->password);
+            $UPDATE_QUERY->bindParam(':email', $this->email);
+            $UPDATE_QUERY->bindParam(':bio', $this->bio);
+            $UPDATE_QUERY->bindParam(':isadmin', $this->isAdmin);
+            $UPDATE_QUERY->bindParam(':id', $this->id);
 
-	    $UPDATE_QUERY_SAFE->execute();
+            $UPDATE_QUERY->execute();
 
-	    return;
+            return;
         }
     }
 
     function delete()
     {
-	$DELETE_QUERY_SAFE = self::$app->db->prepare("DELETE FROM users WHERE id=:id");
-	$DELETE_QUERY_SAFE->bindParam(':id', $this->id);
-	$DELETE_QUERY_SAFE->execute();
+        $DELETE_QUERY = self::$app->db->prepare("DELETE FROM users WHERE id=:id");
+        $DELETE_QUERY->bindParam(':id', $this->id);
+        $DELETE_QUERY->execute();
 
-	return;
+        return;
     }
 
     function getId()
@@ -145,9 +143,11 @@ class User
      */
     static function findById($userid)
     {
-        $query = sprintf(self::FIND_BY_ID_QUERY, $userid);
-        $result = self::$app->db->query($query, \PDO::FETCH_ASSOC);
-        $row = $result->fetch();
+        $FIND_BY_ID_QUERY = self::$app->db->prepare("SELECT * FROM users WHERE id=:id");
+        $FIND_BY_ID_QUERY->bindParam(':id', $userid);
+        $FIND_BY_ID_QUERY->execute();
+
+        $row = $FIND_BY_ID_QUERY->fetch();
 
         if($row == false) {
             return null;
@@ -164,9 +164,11 @@ class User
      */
     static function findByUser($username)
     {
-        $query = sprintf(self::FIND_BY_NAME_QUERY, $username);
-        $result = self::$app->db->query($query, \PDO::FETCH_ASSOC);
-        $row = $result->fetch();
+        $FIND_BY_NAME_QUERY = self::$app->db->prepare("SELECT * FROM users WHERE username=:username");
+        $FIND_BY_NAME_QUERY->bindParam(':username', $username);
+        $FIND_BY_NAME_QUERY->execute();
+
+        $row = $FIND_BY_NAME_QUERY->fetch();
 
         if($row == false) {
             return null;
