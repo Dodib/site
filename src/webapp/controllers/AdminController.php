@@ -28,7 +28,7 @@ class AdminController extends Controller
     {
         if (Auth::isAdmin()) {
           $user = User::makeEmpty();
-          $this->render('showuser.twig', [
+          $this->render('showuser_admin.twig', [
             'user' => $user
           ]);
         } else {
