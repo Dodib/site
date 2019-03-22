@@ -32,7 +32,11 @@ class AdminController extends Controller
 
     function create()
     {
-        if (Auth::isAdmin()) {
+	if(Auth::user() == null){
+		$this->app->flash('info', 'You do not have access to this resource');
+		$this->app->redirect('/');	
+	}    
+	if (Auth::isAdmin()) {
           $user = User::makeEmpty();
           $this->render('showuser_admin.twig', [
             'user' => $user

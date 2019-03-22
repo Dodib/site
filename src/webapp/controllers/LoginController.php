@@ -41,21 +41,21 @@ class LoginController extends Controller
 
             		$user = User::findByUser($username);
             		$_SESSION['userid'] = $user->getId();
-            		$this->app->flash('info', "You are now successfully logged in as " . $user->getUsername() . ".");
+            		$this->app->flashNow('info', "You are now successfully logged in as " . $user->getUsername() . ".");
 			self::log_logins($request, 'success');
 	    		$this->app->redirect('/');
 		}else{
-			$this->app->flash('info', 'Incorrect username/password combination.');
+			$this->app->flashNow('info', 'Incorrect username/password combination.');
 			self::log_logins($request, 'failed');
         		$this->render('login.twig', []);
 		}
-	}elseif(Auth::block($username) == 5){
+	}elseif(Auth::block($username) >= 5){
 		# user is blocked
-        	$this->app->flash('info', 'This user is blocked, please contact the admin');
+        	$this->app->flashNow('info', 'This user is blocked, please contact the admin');
 		self::log_logins($request, 'blocked');
         	$this->render('login.twig', []);
 	}else{
-		$this->app->flash('info', 'Incorrect username/password combination.');
+		$this->app->flashNow('info', 'Incorrect username/password combination.');
 		self::log_logins($request, 'failed');
         	$this->render('login.twig', []);
 	}

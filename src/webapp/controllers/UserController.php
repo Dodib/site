@@ -177,7 +177,7 @@ class UserController extends Controller
 				]);
 			}
 		}else{
-			$this->render('showuser_admin.twig', [
+			$this->render('showuser_admin_2.twig', [
 		    	'user' => $user,
 		    	'sessionid' => $sessionid
 	    		]);
@@ -291,7 +291,6 @@ class UserController extends Controller
     }
     function edit($tuserid)    
     { 
-	// if($tuserid == NULL){$tuserid = Auth::user()->getId();}
 	$user = User::findById($tuserid);
         if (! $user) {
             throw new \Exception("Unable to fetch logged in user's object from db.");
@@ -330,7 +329,7 @@ class UserController extends Controller
 	}else{
 		$user->setUsername($user->getUsername());
 		if(strlen($password) != 0){
-			if(!$user->isAdmin()){
+			if($user == Auth::user()){
 				$user->setPassword(password_hash($password, PASSWORD_DEFAULT));
 			}
 		}
