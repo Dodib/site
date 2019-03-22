@@ -17,6 +17,7 @@
                 <br>
                 {% if isLoggedIn %}
                     Logged in as {{ loggedInUsername|raw }}.<br>
+		    <a href="/edit"> Edit profile</a><br>
                     {% if isAdmin %}
                         <a href="/admin">Admin section</a> <br>
                     {% endif %}

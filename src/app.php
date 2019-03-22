@@ -3,7 +3,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 $templatedir =  __DIR__.'/webapp/templates/';
 $app = new \Slim\Slim([
-    'debug' => true,
+    'debug' => false,
     'templates.path' => $templatedir,
     'view' => new \Slim\Views\Twig($templatedir
   )
@@ -13,7 +13,7 @@ $view->parserExtensions = array(
     new \Slim\Views\TwigExtension(),
 );
 $view->parserOptions = array(
-    'debug' => true
+    'debug' => false
 );
 
 
@@ -45,9 +45,12 @@ $app->get( '/register', $ns . 'UserController:index');     //registration form  
 $app->post('/register', $ns . 'UserController:create');    //registration action   <all visitors with valid personal cert>
 $app->get('/admin',  $ns  .  'AdminController:index');
 
+$app->get('/admin/unblock/:userid', $ns . 'UserController:unblock');     //unblock userid		<staff and group members>
 $app->get('/admin/delete/:userid', $ns . 'UserController:delete');     //delete user userid        <staff and group members>
 
 $app->post('/admin/deleteMultiple', $ns . 'UserController:deleteMultiple');     //delete user userid        <staff and group members>
+$app->get('/edit',    $ns . 'UserController:show_user');       //show own user profile          <all site visitors>
+$app->post('/edit',    $ns . 'UserController:edit_2');       //edit own user profile          <all site visitors>
 $app->get('/admin/edit/:userid',    $ns . 'UserController:show');       //add user userid          <staff and group members>
 $app->post('/admin/edit/:userid',   $ns . 'UserController:edit');       //add user userid          <staff and group members>
 

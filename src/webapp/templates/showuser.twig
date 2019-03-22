@@ -5,16 +5,19 @@
 
 {% block content %}
 
-<h2>Edit User {{user.id}}</h2>
+<h2>Edit Profile: {{user.username}}</h2>
 
 {{ flash.error|raw }} <br />
 
 <form action="" method="POST">
+<input type="hidden" name="token" value="{{sessionid}}">
 
 <label>Username: </label>
-<input type="text" name="username" value="{{user.password}}" readonly> <br />
+<input type="text" name="username" value="{{user.username}}" readonly> <br />
+<label>Old Password: </label>
+<input type="password" name="oldpassword" value=""> <br />
 <label>Password: </label>
-<input type="password" name="password" value="{{user.password}}"> <br />
+<input type="password" name="password" value=""> <br />
 <label>email: </label>
 <input type="text" name="email" value="{{user.email}}"> <br />
 <label>bio: </label>

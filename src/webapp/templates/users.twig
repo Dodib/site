@@ -9,14 +9,15 @@
 <h2>All users:</h2>
 
 <form action="/admin/deleteMultiple" method="POST">
+<input type="hidden" name="token" value="{{sessionid}}">
 <table border=1>
 <tr> 
     <th></th>
     <th>ID</th>
     <th>Username</th>
-    <th>Password</th>
     <th>Email</th>
     <th>Bio</th>
+    <th>Blocked login</th>
     <th>Administrator?</th>
     <th>Edit</th>   
 </tr>
@@ -26,13 +27,14 @@
       <td> <input type="checkbox" name="userlist[]" value="{{user.id}}"></td>
       <td> {{user.id}} </td>
       <td> {{user.username}} </td>
-      <td> {{user.password}} </td>
       <td> {{user.email}} </td>
       <td> {{user.bio}} </td>
+      <td> {% if user.getFailedAttempts >= 5 %} Y {% else %} N {% endif %}</td>
       <td> {% if user.isAdmin %} Y {% else %} N {% endif %}  </td>
       <td> 
-          <a href="/admin/edit/{{user.id}}">Edit</a>/ 
-          <a href="/admin/delete/{{user.id}}">Delete</a>
+          <a href="/admin/edit/{{user.id}}">Edit</a> / 
+          <a href="/admin/delete/{{user.id}}?token={{sessionid}}">Delete</a> / 
+          <a href="/admin/unblock/{{user.id}}?token={{sessionid}}">Unblock</a> 
       </td>
   </tr>
 {% endfor %}

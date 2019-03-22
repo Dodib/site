@@ -16,7 +16,8 @@ class AdminController extends Controller
     {
         if (Auth::isAdmin()) {
             $users = User::all();
-            $this->render('users.twig', ['users' => $users]);
+	    $sessionid = session_id();
+            $this->render('users.twig', ['users' => $users, 'sessionid' => $sessionid]);
         } else {
             $username = Auth::user()->getUserName();
             $this->app->flash('info', 'You do not have access this resource. You are logged in as ' . $username);

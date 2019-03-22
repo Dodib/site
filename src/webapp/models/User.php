@@ -10,11 +10,12 @@ class User
     protected $email;
     protected $bio = 'Bio is empty.';
     protected $isAdmin = 0;
+    protected $failedattempts = 0;
 
     static $app;
 
 
-    static function make($id, $username, $password, $email, $bio, $isAdmin )
+    static function make($id, $username, $password, $email, $bio, $isAdmin, $failedattempts)
     {
         $user = new User();
         $user->id = $id;
@@ -22,7 +23,8 @@ class User
         $user->password = $password;
         $user->email = $email;
         $user->bio = $bio;
-        $user->isAdmin = $isAdmin;
+	$user->isAdmin = $isAdmin;
+	$user->failedattempts = $failedattempts;
 
         return $user;
     }
@@ -38,12 +40,13 @@ class User
     function save()
     {
         if ($this->id === null) {
-            $INSERT_QUERY = self::$app->db->prepare("INSERT INTO users (username, password, email, bio, isadmin) VALUES (:username, :password, :email, :bio, :isadmin)");
+            $INSERT_QUERY = self::$app->db->prepare("INSERT INTO users (username, password, email, bio, failedattempts, isadmin) VALUES (:username, :password, :email, :bio, :fa, :isadmin)");
 
             $INSERT_QUERY->bindParam(':username', $this->username);
             $INSERT_QUERY->bindParam(':password', $this->password);
             $INSERT_QUERY->bindParam(':email', $this->email);
-            $INSERT_QUERY->bindParam(':bio', $this->bio);
+	    $INSERT_QUERY->bindParam(':bio', $this->bio);
+	    $INSERT_QUERY->bindParam(':fa', $this->failedattempts);
             $INSERT_QUERY->bindParam(':isadmin', $this->isAdmin);
 
             $INSERT_QUERY->execute();
@@ -51,12 +54,13 @@ class User
             return;
 
         } else {
-            $UPDATE_QUERY = self::$app->db->prepare("UPDATE users SET username=:username, password=:password, email=:email, bio=:bio, isadmin=:isadmin WHERE id=:id");
+            $UPDATE_QUERY = self::$app->db->prepare("UPDATE users SET username=:username, password=:password, email=:email, bio=:bio, failedattempts=:fa,isadmin=:isadmin WHERE id=:id");
 
             $UPDATE_QUERY->bindParam(':username', $this->username);
             $UPDATE_QUERY->bindParam(':password', $this->password);
             $UPDATE_QUERY->bindParam(':email', $this->email);
-            $UPDATE_QUERY->bindParam(':bio', $this->bio);
+	    $UPDATE_QUERY->bindParam(':bio', $this->bio);
+	    $UPDATE_QUERY->bindParam(':fa', $this->failedattempts);
             $UPDATE_QUERY->bindParam(':isadmin', $this->isAdmin);
             $UPDATE_QUERY->bindParam(':id', $this->id);
 
@@ -104,6 +108,10 @@ class User
     {
         return $this->isAdmin === "1";
     }
+    function getFailedAttempts()
+    {
+	return $this->failedattempts;
+    }
 
     function setId($id)
     {
@@ -128,6 +136,10 @@ class User
     function setBio($bio)
     {
         $this->bio = $bio;
+    }
+    function setFailedAttempts($fa)
+    {
+    	$this->failedattempts = $fa;
     }
     function setIsAdmin($isAdmin)
     {
@@ -201,7 +213,8 @@ class User
             $row['password'],
             $row['email'],
             $row['bio'],
-            $row['isadmin']
+	    $row['isadmin'],
+	    $row['failedattempts']
         );
     }
 

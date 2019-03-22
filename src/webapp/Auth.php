@@ -6,25 +6,45 @@ use ttm4135\webapp\models\User;
 
 class Auth
 {
+    static $app;
+
     function __construct()
     {
     }
 
     static function checkCredentials($username, $password)
     {
-        $user = User::findByUser($username);
-
-        if ($user === null) {
-            return false;
+	$user = User::findByUser($username);
+	# User does not exist
+	if ($user === null) {
+        	return false;
         }
-
-        if( $user->getPassword() == $password)
+	# user found, verify the password is correct
+	$id = $user->getId();
+        if(password_verify($password, $user->getPassword()))
         {
-          return true;
-        }
+		# correct login, reset the "blocking"
+		$UPDATE_QUERY = self::$app->db->prepare("UPDATE users SET failedattempts = 0 WHERE id = :id");
+		$UPDATE_QUERY->bindParam(':id', $id);
+		$UPDATE_QUERY->execute();
+		return true;
+	}
+	# login failed increment the "blocking"
+	$UPDATE_QUERY = self::$app->db->prepare("UPDATE users SET failedattempts = failedattempts + 1 WHERE id = :id");
+	$UPDATE_QUERY->bindParam(':id', $id);
+	$UPDATE_QUERY->execute();
         return false;
     }
 
+    static function block($username)
+    {
+	$user = User::findByUser($username);
+	if($user == null){
+		return 0;
+	}else{
+	return $user->getFailedAttempts();
+	}
+    }
     /**
      * Check if is logged in.
      */
@@ -83,6 +103,7 @@ class Auth
     {
         session_unset();
         session_destroy();	
-        session_regenerate_id();
     }
 }
+
+Auth::$app = \Slim\Slim::getInstance();
