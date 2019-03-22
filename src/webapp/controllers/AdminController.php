@@ -14,6 +14,11 @@ class AdminController extends Controller
 
     function index()     
     {
+	if (Auth::user() == null) {
+	    $this->app->flash('info', 'You do not have access to this resource.');
+	    $this->app->redirect('/login');
+	}
+
         if (Auth::isAdmin()) {
             $users = User::all();
 	    $sessionid = session_id();
