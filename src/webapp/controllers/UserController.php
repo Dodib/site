@@ -156,6 +156,10 @@ class UserController extends Controller
 
     function show($tuserid)   
     {
+	if(Auth::user() == null){
+		$this->app->flash('info', 'You do not have accesss to this resource');
+		$this->app->redirect("/");
+	}
         if(Auth::isAdmin())
         {
 		$user = User::findById($tuserid);
